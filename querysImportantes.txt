@@ -1,0 +1,70 @@
+
+//saca los usuario con su departamento y la ruta completa
+WITH RECURSIVE EntidadRuta AS (
+    -- Seleccionamos la entidad raíz (sin padre) como punto de inicio
+    SELECT 
+        entidad.identidad AS id_entidad,
+        entidad.idpadre,
+        entidad.descripcion,
+        CONCAT(entidad.nombre) AS ruta,
+        entidad.nombre as depto
+    FROM correspondicia_hm.entidad
+    WHERE entidad.idpadre IS NULL
+    
+    UNION ALL
+    
+    -- Recorre a las entidades hijas y construye la ruta de abajo hacia arriba
+    SELECT 
+        e.identidad AS id_entidad,
+        e.idpadre,
+        e.descripcion,
+        CONCAT(e.nombre, " -> ", er.ruta) AS ruta,
+         e.nombre as depto
+    FROM correspondicia_hm.entidad e
+    JOIN EntidadRuta er ON e.idpadre = er.id_entidad
+)
+SELECT 
+    usuario.nombre AS usuario_,
+    usuario.celular,
+    usuario.correo,
+    CONCAT(er.ruta, " -> ", organizacion.nombre) AS pertenece,
+    usuario.id_entidad,
+    entidad.nombre as depto
+FROM correspondicia_hm.usuario
+JOIN correspondicia_hm.entidad ON entidad.identidad = usuario.id_entidad
+JOIN correspondicia_hm.organizacion ON organizacion.idorganizacion = entidad.idorganizacion
+JOIN EntidadRuta er ON er.id_entidad = entidad.identidad;
+
+
+#####################
+WITH RECURSIVE EntidadRuta AS (
+    -- Seleccionamos la entidad raíz (sin padre)
+    SELECT 
+        entidad.identidad AS id_entidad,
+        entidad.idpadre,
+        entidad.descripcion,
+        CONCAT(entidad.nombre) AS ruta
+    FROM correspondicia_hm.entidad
+    WHERE entidad.idpadre IS NULL
+    
+    UNION ALL
+    
+    -- Recurre a las entidades hijas, concatenando la descripción para la ruta
+    SELECT 
+        e.identidad AS id_entidad,
+        e.idpadre,
+        e.descripcion,
+        CONCAT(er.ruta, " -> ", e.nombre) AS ruta
+    FROM correspondicia_hm.entidad e
+    JOIN EntidadRuta er ON e.idpadre = er.id_entidad
+)
+SELECT 
+    usuario.nombre AS usuario_,
+    usuario.celular,
+    usuario.correo,
+    CONCAT(er.ruta, " -> ", organizacion.nombre) AS pertenece,
+    usuario.id_entidad
+FROM correspondicia_hm.usuario
+JOIN correspondicia_hm.entidad ON entidad.identidad = usuario.id_entidad
+JOIN correspondicia_hm.organizacion ON organizacion.idorganizacion = entidad.idorganizacion
+JOIN EntidadRuta er ON er.id_entidad = entidad.identidad;
