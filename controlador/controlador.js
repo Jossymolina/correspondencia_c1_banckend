@@ -20,7 +20,7 @@ function prueba(req,res){
 function crearOrganizacion(req,res){
     let p= req.body
     let sql =`
-    INSERT INTO correspondencia_jefatura.organizacion 
+    INSERT INTO correspondencia_C_1.organizacion 
     (nombre, direccion) VALUES ('${p.nombre}', '${p.direccion}');
     `
     console.log(sql)
@@ -34,7 +34,7 @@ function crearOrganizacion(req,res){
 function agregarEntidad(req,res){
     let p= req.body
     let sql =`
-         INSERT INTO correspondencia_jefatura.entidad
+         INSERT INTO correspondencia_C_1.entidad
           (idorganizacion, idpadre, nombre, descripcion, tipo) VALUES
            ('${p.idorganizacion}', ${p.idpadre?p.idpadre:null}, '${p.nombre}', '${p.descripcion}', '${p.tipo.identidad_tipo}');
 
@@ -48,7 +48,7 @@ function agregarEntidad(req,res){
 function eliminarOrganizacion(req,res){
     let p = req.body
     let sql =`
-    DELETE FROM correspondencia_jefatura.organizacion WHERE (idorganizacion = '${p.idorganizacion}');
+    DELETE FROM correspondencia_C_1.organizacion WHERE (idorganizacion = '${p.idorganizacion}');
 
     `
     console.log(sql)
@@ -60,7 +60,7 @@ function eliminarOrganizacion(req,res){
 function modificarOrganizacion(req,res){
     let p = req.body
     let sql = `
-    UPDATE correspondencia_jefatura.organizacion 
+    UPDATE correspondencia_C_1.organizacion 
     SET nombre = '${p.nombre}', direccion = '${p.direccion}' WHERE (idorganizacion = '${p.idorganizacion}');
 
     `
@@ -72,7 +72,7 @@ function modificarOrganizacion(req,res){
 function eliminarEntidad(req,res){
     let p = req.body
     let sql = `
-    DELETE FROM correspondencia_jefatura.entidad WHERE (identidad = '${p.identidad}');
+    DELETE FROM correspondencia_C_1.entidad WHERE (identidad = '${p.identidad}');
 
     `
     db.query(sql,(error,result,field)=>{
@@ -84,7 +84,7 @@ function eliminarEntidad(req,res){
 function modificarEntidad(req,res){
     let p = req.body
     let sql = `
-          UPDATE correspondencia_jefatura.entidad 
+          UPDATE correspondencia_C_1.entidad 
           SET idorganizacion = '${p.idorganizacion}', 
 
           identidad_tipo = '${p.identidad_tipo}',
@@ -102,7 +102,7 @@ function modificarEntidad(req,res){
 function sacarOrganizacion(req,res){
     let p = req.body
     let sql = `
-       SELECT * FROM correspondencia_jefatura.organizacion;
+       SELECT * FROM correspondencia_C_1.organizacion;
 
     `
     db.query(sql,(error,result,field)=>{
@@ -114,7 +114,7 @@ function sacarOrganizacion(req,res){
 function sacarEntidad(req,res){
     let p = req.body
     let sql = `
-      SELECT * FROM correspondencia_jefatura.entidad;
+      SELECT * FROM correspondencia_C_1.entidad;
     `
     db.query(sql,(error,result,field)=>{
         if(error) return res.status(200).send({error:error.sqlMessage})
@@ -126,7 +126,7 @@ function sacarEntidad(req,res){
 function sacarTipoEntidad(req,res){
     let p = req.body
     let sql = `
-    SELECT * FROM correspondencia_jefatura.entidad_tipo;
+    SELECT * FROM correspondencia_C_1.entidad_tipo;
     `
     db.query(sql,(error,result,field)=>{
         if(error) return res.status(200).send({error:error.sqlMessage})
@@ -138,7 +138,7 @@ function sacarTipoEntidad(req,res){
 
 function sacarPadresEntidad(req,res){
     let sq=`
-    SELECT * FROM correspondencia_jefatura.entidad
+    SELECT * FROM correspondencia_C_1.entidad
  where idorganizacion=${req.body.idorganizacion} 
     `
     db.query(sq,(error,result,field)=>{
@@ -152,7 +152,7 @@ function sacarPadresEntidad(req,res){
 function guadarEntidad(req,res){
     let p = req.body
     let sql =`
-    INSERT INTO correspondencia_jefatura.entidad (idorganizacion, identidad_tipo
+    INSERT INTO correspondencia_C_1.entidad (idorganizacion, identidad_tipo
       ${p.idpadre? ',idpadre':''}, nombre, descripcion) VALUES
       ('${p.idorganizacion}', '${p.identidad_tipo}' ${p.idpadre? ',"'+p.idpadre+'"':''}, '${p.nombre}', '${p.descripcion}');
     `
@@ -175,7 +175,7 @@ function sacarEntidades_X_Organizacion(req,res){
         e.identidad_tipo,
         1 AS nivel,
         CAST(e.nombre AS CHAR(255)) AS path -- Inicia el camino con el nombre de la entidad
-    FROM correspondencia_jefatura.entidad e
+    FROM correspondencia_C_1.entidad e
     WHERE e.idpadre IS NULL AND e.idorganizacion =${req.body.idorganizacion}
     
     UNION ALL
@@ -189,7 +189,7 @@ function sacarEntidades_X_Organizacion(req,res){
         e.identidad_tipo, 
         j.nivel + 1,
         CONCAT(e.nombre, ' -> ', j.path) AS path -- Invertimos el orden del camino
-    FROM correspondencia_jefatura.entidad e
+    FROM correspondencia_C_1.entidad e
     INNER JOIN Jerarquia j ON e.idpadre = j.identidad
 )
 
@@ -212,7 +212,7 @@ ORDER BY path ASC;
         1 AS nivel,
         CAST(e.nombre AS CHAR(255)) AS path,
         cAST(e.nombre AS CHAR(255)) AS path_rever -- Inicia el camino con el nombre de la entidad
-    FROM correspondencia_jefatura.entidad e
+    FROM correspondencia_C_1.entidad e
     WHERE e.idpadre IS NULL and idorganizacion=
     
     UNION ALL
@@ -227,7 +227,7 @@ ORDER BY path ASC;
         j.nivel + 1,
         CONCAT(j.path, ' -> ', e.nombre) AS path, -- Agregar el nombre al camino
         CONCAT(e.nombre, ' -> ', j.path) AS path_rever
-    FROM correspondencia_jefatura.entidad e
+    FROM correspondencia_C_1.entidad e
     INNER JOIN Jerarquia j ON e.idpadre = j.identidad
 )
 
@@ -250,7 +250,7 @@ function agregarFirmas(req,res){
     let p =req.body
     console.log(p)
     let sql = `
-    INSERT INTO correspondencia_jefatura.firmas
+    INSERT INTO correspondencia_C_1.firmas
      (identidad, estado, grado, nombre, cargo, fecha,fecha_sistema,serie) 
      VALUES ('${p.nodo.identidad}', '${p.estado}', '${p.grado}', '${p.nombre}', '${p.cargo}', '${p.fecha}',now(),'${p.Serie}');
 
@@ -263,7 +263,7 @@ function agregarFirmas(req,res){
 }
 function sacarFirmas(req,res){
   let sql = `
-          SELECT * FROM correspondencia_jefatura.firmas where identidad=${req.body.identidad} and estado=1
+          SELECT * FROM correspondencia_C_1.firmas where identidad=${req.body.identidad} and estado=1
   `
   db.query(sql,(error,resultado,field)=>{
     if(error) return res.status(200).send({error:error.sqlMessage})
@@ -275,7 +275,7 @@ function sacarFirmas(req,res){
 
 function eliminarFirmas(req,res){
     let sql=`
-    DELETE FROM correspondencia_jefatura.firmas WHERE (idfirmas = '${req.body.idfirmas}');
+    DELETE FROM correspondencia_C_1.firmas WHERE (idfirmas = '${req.body.idfirmas}');
 
     `
     db.query(sql,(error,resultado,field)=>{
@@ -287,7 +287,7 @@ function eliminarFirmas(req,res){
 function modificarFirmas(req,res){
     let p = req.body
     let sql =`
-   UPDATE correspondencia_jefatura.firmas 
+   UPDATE correspondencia_C_1.firmas 
    SET 
     estado = '${p.estado}', 
     grado = '${p.grado}', 
@@ -307,7 +307,7 @@ function modificarFirmas(req,res){
 }
 
 function sacarorigen(req,res){
-    let sql = `SELECT * FROM correspondencia_jefatura.origenes;`
+    let sql = `SELECT * FROM correspondencia_C_1.origenes;`
     db.query(sql,(error,resultado,field)=>{
         if(error) return res.status(200).send({error:error.sqlMessage})
         if(resultado.length===0) return res.status(200).send({mensaje:"No se encontraron origenes"})
@@ -316,7 +316,7 @@ function sacarorigen(req,res){
     })
 }
 function sacarClasificacion(req,res){
-    let sql = `SELECT * FROM correspondencia_jefatura.correspondencia_clasificacion;`
+    let sql = `SELECT * FROM correspondencia_C_1.correspondencia_clasificacion;`
     db.query(sql,(error,resultado,field)=>{
         if(error) return res.status(200).send({error:error.sqlMessage})
         if(resultado.length===0) return res.status(200).send({mensaje:"No se encontraron clasificaciones"})
@@ -325,7 +325,7 @@ function sacarClasificacion(req,res){
     })
 }
 function sacarTipoCorrespondencia(req,res){
-    let sql = `SELECT * FROM correspondencia_jefatura.correspondencia_tipo;`
+    let sql = `SELECT * FROM correspondencia_C_1.correspondencia_tipo;`
     db.query(sql,(error,resultado,field)=>{
         if(error) return res.status(200).send({error:error.sqlMessage})
         if(resultado.length===0) return res.status(200).send({mensaje:"No se encontraron los tipos"})
@@ -335,7 +335,7 @@ function sacarTipoCorrespondencia(req,res){
 }
 
 function sacarNivelAtencion(req,res){
-    let sql = `SELECT * FROM correspondencia_jefatura.correspondencia_nivel_atencion;`
+    let sql = `SELECT * FROM correspondencia_C_1.correspondencia_nivel_atencion;`
     db.query(sql,(error,resultado,field)=>{
         if(error) return res.status(200).send({error:error.sqlMessage})
         if(resultado.length===0) return res.status(200).send({mensaje:"No se encontraron los niveles de atencion"})
@@ -358,7 +358,7 @@ function sacarNivelAtencion(req,res){
 
  
     let sql = `
-    INSERT INTO correspondencia_jefatura.correspondencia (identidad, idorigenes, fecha, 
+    INSERT INTO correspondencia_C_1.correspondencia (identidad, idorigenes, fecha, 
     fecha_sistema, texto,expediente,
     idprioridad,idtipo,idclasificacion,idusuario ${p.f1?',firma1':'' } ${p.f2?',firma2':'' } ${p.f3?',firma3':'' }) 
     VALUES ('${p.identidad}', '${p.origen.idorigenes}', '${p.fecha}', now(), '${p.descripcion}',
@@ -406,7 +406,7 @@ function guardarMasOrigenes(idcorrespondencia, marOrigenes) {
   ).join(",");
 
   let sql = `
-    INSERT INTO correspondencia_jefatura.correspondencias_mas_origenes
+    INSERT INTO correspondencia_C_1.correspondencias_mas_origenes
     (idcorrespondencia, idorigen)
     VALUES ${valores};
   `;
@@ -420,7 +420,7 @@ console.log(sql)
 function guardarArchivosBloque(archivo,idCorrespondencia,idusuario,id_entidad){
     for (let index = 0; index < archivo.length; index++) {
         let sql =`
-        INSERT INTO correspondencia_jefatura.archivos
+        INSERT INTO correspondencia_C_1.archivos
          (idcorrespondencia, dir, nombre, usuario, fecha_sistema,id_entidad) 
          VALUES ('${idCorrespondencia}', '${archivo[index].filename}', '${archivo[index].originalname}',${idusuario}, now(),${id_entidad});
 
@@ -443,7 +443,7 @@ async function  guardarUsuarios(req,res){
     let password =await   hashPassword(p.contrasena);
     
     let sql = `
-         INSERT INTO correspondencia_jefatura.usuario (id_entidad, nombre, contrasena, usuario, correo, celular)
+         INSERT INTO correspondencia_C_1.usuario (id_entidad, nombre, contrasena, usuario, correo, celular)
           VALUES ('${p.depto.identidad}', '${p.nombre}', '${password}', '${p.usuario}', '${p.correo}','${p.telefono}');
     `
     console.log(sql)
@@ -456,8 +456,8 @@ async function  guardarUsuarios(req,res){
 
 function sacarTodoUsuario(req,res){
     let sql =`
-SELECT *, entidad.nombre as depto,usuario.nombre as nombre_usuario FROM correspondencia_jefatura.usuario
-join  correspondencia_jefatura.entidad on entidad.identidad =usuario.id_entidad
+SELECT *, entidad.nombre as depto,usuario.nombre as nombre_usuario FROM correspondencia_C_1.usuario
+join  correspondencia_C_1.entidad on entidad.identidad =usuario.id_entidad
      `
      db.query( sql,(error,resultado,field)=>{
         if(error) return res.status(200).send({error:error.sqlMessage})
@@ -468,7 +468,7 @@ join  correspondencia_jefatura.entidad on entidad.identidad =usuario.id_entidad
 }
 function eliminarUsuario(req,res){
     let sql = `
-    DELETE FROM correspondencia_jefatura.usuario WHERE (idusuario = '${req.body.idusuario}');
+    DELETE FROM correspondencia_C_1.usuario WHERE (idusuario = '${req.body.idusuario}');
 
     `
     db.query( sql,(error,resultado,field)=>{
@@ -482,7 +482,7 @@ function eliminarUsuario(req,res){
 function modificarUsuario(req,res){
     let p=req.body
     let sql=`
-    UPDATE correspondencia_jefatura.usuario
+    UPDATE correspondencia_C_1.usuario
      SET id_entidad = '${p.depto.identidad}', 
      nombre = '${p.nombre}',
     
@@ -525,8 +525,8 @@ async function loguiarse(req,res){
     if (detectarInyeccion(p.usuario) || detectarInyeccion(p.contrasena))  return res.status(200).send({mensaje:"Se detecto intento de inyeccion SQL 🕵️‍♀️"})
 
 
-let traerContrasena=`SELECT contrasena FROM correspondencia_jefatura.usuario
-    join  correspondencia_jefatura.entidad on entidad.identidad =  usuario.id_entidad
+let traerContrasena=`SELECT contrasena FROM correspondencia_C_1.usuario
+    join  correspondencia_C_1.entidad on entidad.identidad =  usuario.id_entidad
      where  usuario='${p.usuario}' `
 console.log(traerContrasena)
   let esperarpeticion = await new Promise((resolve,reject)=>{
@@ -544,8 +544,8 @@ console.log(esperarpeticion.resultado[0].contrasena)
   const match = await verificarContrasena(p.contrasena, esperarpeticion.resultado[0].contrasena);
   if (match) {
     let sql = `SELECT idusuario,id_entidad,usuario,correo,celular,idorganizacion,usuario.nombre as nombre,
-    entidad.nombre as depto FROM correspondencia_jefatura.usuario
-        join  correspondencia_jefatura.entidad on entidad.identidad =  usuario.id_entidad
+    entidad.nombre as depto FROM correspondencia_C_1.usuario
+        join  correspondencia_C_1.entidad on entidad.identidad =  usuario.id_entidad
          where  usuario='${p.usuario}'`
         db.query( sql,(error,resultado,field)=>{
             if(error) return res.status(200).send({error:error.sqlMessage})
@@ -559,9 +559,9 @@ console.log(esperarpeticion.resultado[0].contrasena)
                                 usuario_permiso.idusuario,
                                 IF(usuario_permiso.idusuario IS NULL, false, true) AS autorizado
                             FROM 
-                                correspondencia_jefatura.permisos
+                                correspondencia_C_1.permisos
                             LEFT JOIN 
-                                correspondencia_jefatura.usuario_permiso 
+                                correspondencia_C_1.usuario_permiso 
                                 ON usuario_permiso.idpermisos = permisos.idpermisos
                                 AND usuario_permiso.idusuario = ${resultado[0].idusuario}
                             ORDER BY 
@@ -596,7 +596,7 @@ async function verificarContrasena(passwordIngresada, hashGuardado) {
 function buscarUsuario(req,res){
     let p = req.body 
     let sql=`
-    SELECT *,false as compartir_depto FROM correspondencia_jefatura.vista_usuario_depto
+    SELECT *,false as compartir_depto FROM correspondencia_C_1.vista_usuario_depto
      where concat(usuario_," ",depto," ",correo) like "%${p.texto}%"
     `
     db.query( sql,(error,resultado,field)=>{
@@ -622,7 +622,7 @@ if(arreglo.length!==0){
     
     let bulk = cadena.substring(0,cadena.length-1);
      
-    let sql = `INSERT INTO correspondencia_jefatura.correspondencia_compartidos_usuario
+    let sql = `INSERT INTO correspondencia_C_1.correspondencia_compartidos_usuario
     (idusuario_receptor, idcorrespondencia, fecha_sistema,idusuario_emisor) 
     VALUES ${bulk} ` 
     console.log("Compartir")
@@ -649,15 +649,15 @@ correspondencia_nivel_atencion.color as color_prioridad,
 correspondencia_tipo.nombre as nombre_tipo,
 correspondencia_clasificacion.nombre as nombre_clasificacion,
 correspondencia_clasificacion.color as clasificacion_color,
-(select correspondencia_jefatura.sacar_estado_corres(correspondencia.idcorrespondencia)) as estado_correspondencia,
+(select correspondencia_C_1.sacar_estado_corres(correspondencia.idcorrespondencia)) as estado_correspondencia,
 correspondencia.idusuario
  
 
- FROM correspondencia_jefatura.correspondencia
-join correspondencia_jefatura.origenes on origenes.idorigenes = correspondencia.idorigenes
-join correspondencia_jefatura.correspondencia_nivel_atencion on correspondencia_nivel_atencion.id_nivel_atencion = correspondencia.idprioridad
- join correspondencia_jefatura.correspondencia_tipo on correspondencia_tipo.id_tipo = correspondencia.idtipo
-  join correspondencia_jefatura.correspondencia_clasificacion on correspondencia_clasificacion.id_clasificacion = correspondencia.idclasificacion
+ FROM correspondencia_C_1.correspondencia
+join correspondencia_C_1.origenes on origenes.idorigenes = correspondencia.idorigenes
+join correspondencia_C_1.correspondencia_nivel_atencion on correspondencia_nivel_atencion.id_nivel_atencion = correspondencia.idprioridad
+ join correspondencia_C_1.correspondencia_tipo on correspondencia_tipo.id_tipo = correspondencia.idtipo
+  join correspondencia_C_1.correspondencia_clasificacion on correspondencia_clasificacion.id_clasificacion = correspondencia.idclasificacion
  where idusuario=${p.idusuario} order by fecha_sistema desc)as T) as D where 1=1 ${p.cadena} limit 200
   
     `
@@ -683,9 +683,9 @@ function sacarArchivosPDF(req, res) {
 function sacarArchivosCorrespondencia(req,res){
     let sql =`
   SELECT idarchivos,usuario.idusuario,idcorrespondencia,idarchivos,dir,archivos.nombre as nombre_archivo,
-  fecha_sistema,archivos.id_entidad,usuario.nombre,correo,celular,entidad.nombre as depto FROM correspondencia_jefatura.archivos 
-    join correspondencia_jefatura.entidad on entidad.identidad = archivos.id_entidad
-    join  correspondencia_jefatura.usuario on usuario.idusuario = archivos.usuario
+  fecha_sistema,archivos.id_entidad,usuario.nombre,correo,celular,entidad.nombre as depto FROM correspondencia_C_1.archivos 
+    join correspondencia_C_1.entidad on entidad.identidad = archivos.id_entidad
+    join  correspondencia_C_1.usuario on usuario.idusuario = archivos.usuario
         where idcorrespondencia=${req.body.idcorrespondencia}
         order by fecha_sistema desc
     `
@@ -710,7 +710,7 @@ async function agregarComentarioDocumento(req,res){
 
 function agregarComentario(idarchivo, idusuario, texto,id_entidad,idpadre_comentario){
     console.log(idpadre_comentario)
-let sql =`INSERT INTO correspondencia_jefatura.comentarios_archivo (idarchivo, idusuario,
+let sql =`INSERT INTO correspondencia_C_1.comentarios_archivo (idarchivo, idusuario,
  fecha_sistema, texto,id_entidad ${idpadre_comentario?',idpadre_comentario':''})
  VALUES ('${idarchivo}', '${idusuario}',now(), '${texto}',${id_entidad} ${idpadre_comentario?','+idpadre_comentario:''});
  `
@@ -722,9 +722,9 @@ let sql =`INSERT INTO correspondencia_jefatura.comentarios_archivo (idarchivo, i
  
 function sacarcomentarioArchivo(req,res){
     let sql =`
-    SELECT usuario_,correo,idarchivo,comentarios_archivo.idusuario,comentarios_archivo.id_entidad,nombre as depto,fecha_sistema,texto FROM correspondencia_jefatura.comentarios_archivo
-join correspondencia_jefatura.vista_usuario_depto on  vista_usuario_depto.idusuario =comentarios_archivo.idusuario
-join  correspondencia_jefatura.entidad on entidad.identidad = comentarios_archivo.id_entidad
+    SELECT usuario_,correo,idarchivo,comentarios_archivo.idusuario,comentarios_archivo.id_entidad,nombre as depto,fecha_sistema,texto FROM correspondencia_C_1.comentarios_archivo
+join correspondencia_C_1.vista_usuario_depto on  vista_usuario_depto.idusuario =comentarios_archivo.idusuario
+join  correspondencia_C_1.entidad on entidad.identidad = comentarios_archivo.id_entidad
 where idarchivo=${req.body.idarchivo} order by fecha_sistema
     `
   db.query(sql,(error1,result,fiel)=>{
@@ -747,7 +747,7 @@ function  cargarMasArchivoCorrespondecia(req,res){
 function agregarDisposicion(req,res){
     let p =req.body
 let sql =`
-INSERT INTO correspondencia_jefatura.correspondencia_disposicion
+INSERT INTO correspondencia_C_1.correspondencia_disposicion
 (idusuario, id_entidad, fecha_sistema, texto,idcorrespondencia) VALUES
  ('${p.usuario.idusuario}', '${p.usuario.id_entidad}', now(), '${p.texto}',${p.idcorrespondencia});
 
@@ -762,9 +762,9 @@ function sacarDisposicion(req,res){
     let p = req.body
     let sql = `
     SELECT idcorrespondencia_disposicion,fecha_sistema,texto,usuario,usuario.idusuario,entidad.identidad as id_entidad,
-entidad.nombre as depto FROM correspondencia_jefatura.correspondencia_disposicion
-join correspondencia_jefatura.entidad on entidad.identidad =correspondencia_disposicion.id_entidad
-join correspondencia_jefatura.usuario on usuario.idusuario =correspondencia_disposicion.idusuario
+entidad.nombre as depto FROM correspondencia_C_1.correspondencia_disposicion
+join correspondencia_C_1.entidad on entidad.identidad =correspondencia_disposicion.id_entidad
+join correspondencia_C_1.usuario on usuario.idusuario =correspondencia_disposicion.idusuario
 where idcorrespondencia=${p.idcorrespondencia}
     `
     console.log(sql)
@@ -796,7 +796,7 @@ function eliminarArchivosPloque(data) {
   function eliminarArchivoCorrespondencia(req,res){
     let p = req.body
     let sql = `
-    DELETE FROM correspondencia_jefatura.archivos WHERE (idarchivos = '${p.archivo.idarchivos}');
+    DELETE FROM correspondencia_C_1.archivos WHERE (idarchivos = '${p.archivo.idarchivos}');
     `
     db.query(sql,(error1,result,fiel)=>{
         if(error1) return res.status(200).send({error1:error1.sqlMessage})
@@ -808,8 +808,8 @@ function eliminarArchivosPloque(data) {
   function sacarUsuarioCompartidoCorrespondencia(req,res){
     let p = req.body
     let sql = `
-    SELECT idusuario_receptor as idusuario,pertenece,id_entidad,usuario_,depto,true as compartir_depto FROM correspondencia_jefatura.correspondencia_compartidos_usuario
-join  correspondencia_jefatura.vista_usuario_depto on vista_usuario_depto.idusuario = correspondencia_compartidos_usuario.idusuario_receptor
+    SELECT idusuario_receptor as idusuario,pertenece,id_entidad,usuario_,depto,true as compartir_depto FROM correspondencia_C_1.correspondencia_compartidos_usuario
+join  correspondencia_C_1.vista_usuario_depto on vista_usuario_depto.idusuario = correspondencia_compartidos_usuario.idusuario_receptor
 where idcorrespondencia=${p.idcorrespondencia}
     `
     console.log(sql)
@@ -853,14 +853,14 @@ correspondencia_nivel_atencion.color as color_prioridad,
 correspondencia_tipo.nombre as nombre_tipo,
 correspondencia_clasificacion.nombre as nombre_clasificacion,
 correspondencia_clasificacion.color as clasificacion_color,
-(select correspondencia_jefatura.sacar_estado_corres(correspondencia.idcorrespondencia)) as estado_correspondencia,
+(select correspondencia_C_1.sacar_estado_corres(correspondencia.idcorrespondencia)) as estado_correspondencia,
 correspondencia.idusuario
- FROM correspondencia_jefatura.correspondencia_compartidos_usuario
- join correspondencia_jefatura.correspondencia on correspondencia.idcorrespondencia =correspondencia_compartidos_usuario.idcorrespondencia
-join correspondencia_jefatura.origenes on origenes.idorigenes = correspondencia.idorigenes
-join correspondencia_jefatura.correspondencia_nivel_atencion on correspondencia_nivel_atencion.id_nivel_atencion = correspondencia.idprioridad
- join correspondencia_jefatura.correspondencia_tipo on correspondencia_tipo.id_tipo = correspondencia.idtipo
-  join correspondencia_jefatura.correspondencia_clasificacion on correspondencia_clasificacion.id_clasificacion = correspondencia.idclasificacion
+ FROM correspondencia_C_1.correspondencia_compartidos_usuario
+ join correspondencia_C_1.correspondencia on correspondencia.idcorrespondencia =correspondencia_compartidos_usuario.idcorrespondencia
+join correspondencia_C_1.origenes on origenes.idorigenes = correspondencia.idorigenes
+join correspondencia_C_1.correspondencia_nivel_atencion on correspondencia_nivel_atencion.id_nivel_atencion = correspondencia.idprioridad
+ join correspondencia_C_1.correspondencia_tipo on correspondencia_tipo.id_tipo = correspondencia.idtipo
+  join correspondencia_C_1.correspondencia_clasificacion on correspondencia_clasificacion.id_clasificacion = correspondencia.idclasificacion
  where idusuario_receptor=${p.idusuario}
   order by fecha_sistema desc) as T) as D where 1=1 ${p.cadena} limit 200
 
@@ -877,12 +877,12 @@ correspondencia_nivel_atencion.color as color_prioridad,
 correspondencia_tipo.nombre as nombre_tipo,
 correspondencia_clasificacion.nombre as nombre_clasificacion,
 correspondencia_clasificacion.color as clasificacion_color
- FROM correspondencia_jefatura.correspondencia_compartidos_usuario
- join correspondencia_jefatura.correspondencia on correspondencia.idcorrespondencia =correspondencia_compartidos_usuario.idcorrespondencia
-join correspondencia_jefatura.origenes on origenes.idorigenes = correspondencia.idorigenes
-join correspondencia_jefatura.correspondencia_nivel_atencion on correspondencia_nivel_atencion.id_nivel_atencion = correspondencia.idprioridad
- join correspondencia_jefatura.correspondencia_tipo on correspondencia_tipo.id_tipo = correspondencia.idtipo
-  join correspondencia_jefatura.correspondencia_clasificacion on correspondencia_clasificacion.id_clasificacion = correspondencia.idclasificacion
+ FROM correspondencia_C_1.correspondencia_compartidos_usuario
+ join correspondencia_C_1.correspondencia on correspondencia.idcorrespondencia =correspondencia_compartidos_usuario.idcorrespondencia
+join correspondencia_C_1.origenes on origenes.idorigenes = correspondencia.idorigenes
+join correspondencia_C_1.correspondencia_nivel_atencion on correspondencia_nivel_atencion.id_nivel_atencion = correspondencia.idprioridad
+ join correspondencia_C_1.correspondencia_tipo on correspondencia_tipo.id_tipo = correspondencia.idtipo
+  join correspondencia_C_1.correspondencia_clasificacion on correspondencia_clasificacion.id_clasificacion = correspondencia.idclasificacion
  where idusuario_receptor=${p.idusuario}
   order by fecha_sistema desc */
   console.log(sql)
@@ -898,7 +898,7 @@ join correspondencia_jefatura.correspondencia_nivel_atencion on correspondencia_
   function guardarOrigenes(req,res){
     let p =req.body
     let sql =`
-        INSERT INTO correspondencia_jefatura.origenes (nombre) VALUES ('${p.nombre}');
+        INSERT INTO correspondencia_C_1.origenes (nombre) VALUES ('${p.nombre}');
     `
     db.query(sql,(error1,result,fiel)=>{
         if(error1) return res.status(200).send({error1:error1.sqlMessage})
@@ -910,7 +910,7 @@ join correspondencia_jefatura.correspondencia_nivel_atencion on correspondencia_
     let p =req.body
 
     let sql =`
-    UPDATE correspondencia_jefatura.origenes SET nombre = '${p.nombre}' WHERE (idorigenes = '${p.idorigenes}');
+    UPDATE correspondencia_C_1.origenes SET nombre = '${p.nombre}' WHERE (idorigenes = '${p.idorigenes}');
 
     `
     db.query(sql,(error1,result,fiel)=>{
@@ -925,7 +925,7 @@ join correspondencia_jefatura.correspondencia_nivel_atencion on correspondencia_
     let p =req.body
  
     let sql = `
-DELETE FROM correspondencia_jefatura.origenes WHERE (idorigenes = '${p.idorigenes}');
+DELETE FROM correspondencia_C_1.origenes WHERE (idorigenes = '${p.idorigenes}');
 
 
     `
@@ -941,7 +941,7 @@ DELETE FROM correspondencia_jefatura.origenes WHERE (idorigenes = '${p.idorigene
   function guardarClasificacion(req,res){
     let p = req.body
                 let sql =`
-                INSERT INTO correspondencia_jefatura.correspondencia_clasificacion 
+                INSERT INTO correspondencia_C_1.correspondencia_clasificacion 
                   (nombre, color) VALUES ('${p.nombre}', '---');
                 `
                 db.query(sql,(error1,result,fiel)=>{
@@ -955,7 +955,7 @@ DELETE FROM correspondencia_jefatura.origenes WHERE (idorigenes = '${p.idorigene
   function modificarClasificacion(req,res){
     let p = req.body
                 let sql =`
-                        UPDATE correspondencia_jefatura.correspondencia_clasificacion 
+                        UPDATE correspondencia_C_1.correspondencia_clasificacion 
                         SET nombre = '${p.nombre}' 
                         WHERE (id_clasificacion = '${p.id_clasificacion}');
 
@@ -971,7 +971,7 @@ DELETE FROM correspondencia_jefatura.origenes WHERE (idorigenes = '${p.idorigene
   function EliminarClasificacion(req,res){
     let p = req.body
                 let sql =`
-          DELETE FROM correspondencia_jefatura.correspondencia_clasificacion WHERE (id_clasificacion = '${p.id_clasificacion}');
+          DELETE FROM correspondencia_C_1.correspondencia_clasificacion WHERE (id_clasificacion = '${p.id_clasificacion}');
 
                 `
                 db.query(sql,(error1,result,fiel)=>{
@@ -988,7 +988,7 @@ DELETE FROM correspondencia_jefatura.origenes WHERE (idorigenes = '${p.idorigene
   function guardarPrioridad(req,res){
     let p = req.body
     let sql = `
-    INSERT INTO correspondencia_jefatura.correspondencia_nivel_atencion
+    INSERT INTO correspondencia_C_1.correspondencia_nivel_atencion
      (nombre, color) VALUES ('${p.nombre}', '${p.color}');
 
     `
@@ -1004,7 +1004,7 @@ DELETE FROM correspondencia_jefatura.origenes WHERE (idorigenes = '${p.idorigene
   function EliminarPrioridad(req,res){
     let p = req.body
     let sql = `
-   DELETE FROM correspondencia_jefatura.correspondencia_nivel_atencion WHERE (id_nivel_atencion = '${p.id_nivel_atencion}');
+   DELETE FROM correspondencia_C_1.correspondencia_nivel_atencion WHERE (id_nivel_atencion = '${p.id_nivel_atencion}');
 
 
     `
@@ -1020,7 +1020,7 @@ DELETE FROM correspondencia_jefatura.origenes WHERE (idorigenes = '${p.idorigene
   function ModificarPrioridad(req,res){
     let p = req.body
     let sql = `
-            UPDATE correspondencia_jefatura.correspondencia_nivel_atencion 
+            UPDATE correspondencia_C_1.correspondencia_nivel_atencion 
             SET nombre = '${p.nombre}',color = '${p.color}' WHERE (id_nivel_atencion = '${p.id_nivel_atencion}');
 
     `
@@ -1037,7 +1037,7 @@ DELETE FROM correspondencia_jefatura.origenes WHERE (idorigenes = '${p.idorigene
   function guardarTipo(req,res){
     let p = req.body
     let sql= `
-    INSERT INTO correspondencia_jefatura.correspondencia_tipo (nombre) VALUES ('${p.nombre}');
+    INSERT INTO correspondencia_C_1.correspondencia_tipo (nombre) VALUES ('${p.nombre}');
 
     `
     db.query(sql,(error1,result,fiel)=>{
@@ -1051,7 +1051,7 @@ DELETE FROM correspondencia_jefatura.origenes WHERE (idorigenes = '${p.idorigene
   function guardarTipo(req,res){
     let p = req.body
     let sql= `
-    INSERT INTO correspondencia_jefatura.correspondencia_tipo (nombre) VALUES ('${p.nombre}');
+    INSERT INTO correspondencia_C_1.correspondencia_tipo (nombre) VALUES ('${p.nombre}');
 
     `
     db.query(sql,(error1,result,fiel)=>{
@@ -1065,7 +1065,7 @@ DELETE FROM correspondencia_jefatura.origenes WHERE (idorigenes = '${p.idorigene
   function eliminarTipo(req,res){
     let p = req.body
     let sql= `
-  DELETE FROM correspondencia_jefatura.correspondencia_tipo WHERE (id_tipo = '${p.id_tipo}');
+  DELETE FROM correspondencia_C_1.correspondencia_tipo WHERE (id_tipo = '${p.id_tipo}');
 
     `
     db.query(sql,(error1,result,fiel)=>{
@@ -1078,7 +1078,7 @@ DELETE FROM correspondencia_jefatura.origenes WHERE (idorigenes = '${p.idorigene
   function modificarTipo(req,res){
     let p = req.body
     let sql= `
-UPDATE correspondencia_jefatura.correspondencia_tipo
+UPDATE correspondencia_C_1.correspondencia_tipo
  SET nombre = '${p.nombre}'
   WHERE (id_tipo = '${p.id_tipo}');
 
@@ -1094,11 +1094,11 @@ UPDATE correspondencia_jefatura.correspondencia_tipo
 
  async function enviarCorreoSubirArchivo(idcorrespondencia){
 let sql =`
- (SELECT usuario.nombre as usuario,usuario.correo  FROM correspondencia_jefatura.correspondencia_compartidos_usuario
-join correspondencia_jefatura.usuario on usuario.idusuario =correspondencia_compartidos_usuario.idusuario_receptor 
+ (SELECT usuario.nombre as usuario,usuario.correo  FROM correspondencia_C_1.correspondencia_compartidos_usuario
+join correspondencia_C_1.usuario on usuario.idusuario =correspondencia_compartidos_usuario.idusuario_receptor 
  where idcorrespondencia=${idcorrespondencia}) union
- (SELECT usuario.nombre as usuario,usuario.correo  FROM correspondencia_jefatura.correspondencia_compartidos_usuario
-join correspondencia_jefatura.usuario on usuario.idusuario =correspondencia_compartidos_usuario.idusuario_emisor 
+ (SELECT usuario.nombre as usuario,usuario.correo  FROM correspondencia_C_1.correspondencia_compartidos_usuario
+join correspondencia_C_1.usuario on usuario.idusuario =correspondencia_compartidos_usuario.idusuario_emisor 
  where idcorrespondencia=${idcorrespondencia} limit 1)  
 `
 let usuario = await new Promise((resolve,reject)=>{
@@ -1145,7 +1145,7 @@ async function enviarCorreoAlcompartirDocumento(compartir,idcorrespondencia,usua
     function guardarEstado(req,res){
         let p=req.body
         let sql =`
-     INSERT INTO correspondencia_jefatura.correspondencia_estado
+     INSERT INTO correspondencia_C_1.correspondencia_estado
       (nombre_estado, color,default_)
       VALUES ('${p.nombre}', '${p.color}',0);
 
@@ -1160,7 +1160,7 @@ async function enviarCorreoAlcompartirDocumento(compartir,idcorrespondencia,usua
     function sacarestado(req,res){
         let p=req.body
         let sql =`
-           SELECT * FROM correspondencia_jefatura.correspondencia_estado order by nombre_estado
+           SELECT * FROM correspondencia_C_1.correspondencia_estado order by nombre_estado
         `
         db.query(sql,(error1,result,fiel)=>{
             if(error1) return res.status(200).send({error1:error1.sqlMessage})
@@ -1173,7 +1173,7 @@ async function enviarCorreoAlcompartirDocumento(compartir,idcorrespondencia,usua
     function modificarEstado(req,res){
         let p=req.body
         let sql =`
-         UPDATE correspondencia_jefatura.correspondencia_estado 
+         UPDATE correspondencia_C_1.correspondencia_estado 
          SET nombre_estado = '${p.nombre}', 
          color = '${p.color}' 
          WHERE (idcorrespondencia_estado = '${p.idcorrespondencia_estado}');
@@ -1190,7 +1190,7 @@ async function enviarCorreoAlcompartirDocumento(compartir,idcorrespondencia,usua
     function eliminarEstado(req,res){
         let p=req.body
         let sql =`
-   DELETE FROM correspondencia_jefatura.correspondencia_estado WHERE (idcorrespondencia_estado = '${p.idcorrespondencia_estado}');
+   DELETE FROM correspondencia_C_1.correspondencia_estado WHERE (idcorrespondencia_estado = '${p.idcorrespondencia_estado}');
 
         `
         db.query(sql,(error1,result,fiel)=>{
@@ -1203,7 +1203,7 @@ async function enviarCorreoAlcompartirDocumento(compartir,idcorrespondencia,usua
 
 function agregarDefaultEstado(req,res){
 let sql = `
-call correspondencia_jefatura.agregarDefaultEstado(${req.body.idcorrespondencia_estado});
+call correspondencia_C_1.agregarDefaultEstado(${req.body.idcorrespondencia_estado});
 
 `
 console.log(sql)
@@ -1218,7 +1218,7 @@ db.query(sql,(error1,result,fiel)=>{
  
 async function sacarestadoDefault() {
     let sql =`
-              SELECT * FROM correspondencia_jefatura.correspondencia_estado where default_=1
+              SELECT * FROM correspondencia_C_1.correspondencia_estado where default_=1
          `
     let espera  = await new Promise((resolve,reject)=>{
         db.query(sql,(error1,result,fiel)=>{
@@ -1238,7 +1238,7 @@ return {error:espera.error}
     if (arregloUsuario.length!==0) {
         for (let index = 0; index < arregloUsuario.length; index++) {
             let sql =`
-               INSERT INTO correspondencia_jefatura.correspondencia_estado_user 
+               INSERT INTO correspondencia_C_1.correspondencia_estado_user 
                (idcorrespondencia,id_correspondencia_estado, idusuario, id_entidad, fecha_sistema) 
                VALUES (${idcorrespondencia},${idestado},'${arregloUsuario[index].idusuario}','${arregloUsuario[index].id_entidad}', now());
             `
@@ -1259,7 +1259,7 @@ function cambiarEstadoCorrespondencia(req,res){
     let p=req.body
 
     let sql =`
-    UPDATE correspondencia_jefatura.correspondencia_estado_user
+    UPDATE correspondencia_C_1.correspondencia_estado_user
      SET id_correspondencia_estado = '${p.estado.idcorrespondencia_estado}', 
      fecha_sistema = now()
       WHERE (idcorrespondencia = '${p.idcorrespondencia}') and (idusuario = '${p.usuario.idusuario}');
@@ -1283,10 +1283,10 @@ function sacarEstadoCorrespondencias(req,res){
         color,entidad.nombre as depto,
         usuario.nombre as nombre_usuario,
         correspondencia_estado.nombre_estado
- FROM correspondencia_jefatura.correspondencia_estado_user
-join correspondencia_jefatura.correspondencia_estado on correspondencia_estado.idcorrespondencia_estado=correspondencia_estado_user.id_correspondencia_estado
-join  correspondencia_jefatura.entidad on entidad.identidad = correspondencia_estado_user.id_entidad
-join correspondencia_jefatura.usuario on usuario.idusuario = correspondencia_estado_user.idusuario
+ FROM correspondencia_C_1.correspondencia_estado_user
+join correspondencia_C_1.correspondencia_estado on correspondencia_estado.idcorrespondencia_estado=correspondencia_estado_user.id_correspondencia_estado
+join  correspondencia_C_1.entidad on entidad.identidad = correspondencia_estado_user.id_entidad
+join correspondencia_C_1.usuario on usuario.idusuario = correspondencia_estado_user.idusuario
 where idcorrespondencia=${p.idcorrespondencia}
     `
     db.query(sql,(error1,result,fiel)=>{
@@ -1308,7 +1308,7 @@ function eliminarArchivosBloquedeLATabla(data) {
 async function eliminarCorrespondencia(req,res){
     let p= req.body
 let sql =`
-SELECT * FROM correspondencia_jefatura.archivos where idcorrespondencia=${p.idcorrespondencia}
+SELECT * FROM correspondencia_C_1.archivos where idcorrespondencia=${p.idcorrespondencia}
 `
 let archivos = await new Promise((resolve,reject)=>{
     db.query(sql,(error1,result,fiel)=>{
@@ -1321,7 +1321,7 @@ if(archivos.resultado.length!==0){
     eliminarArchivosBloquedeLATabla(archivos.resultado)
 }
 let eliminar=`
-        delete from correspondencia_jefatura.correspondencia where idcorrespondencia=${p.idcorrespondencia}
+        delete from correspondencia_C_1.correspondencia where idcorrespondencia=${p.idcorrespondencia}
 `
 let eliminar_correspondencia = await new Promise((resolve,reject)=>{
     db.query(eliminar,(error1,result,fiel)=>{
@@ -1345,9 +1345,9 @@ idusuario_permiso,
     usuario_permiso.idusuario,
     IF(usuario_permiso.idusuario IS NULL, false, true) AS autorizado
 FROM 
-    correspondencia_jefatura.permisos
+    correspondencia_C_1.permisos
 LEFT JOIN 
-    correspondencia_jefatura.usuario_permiso 
+    correspondencia_C_1.usuario_permiso 
     ON usuario_permiso.idpermisos = permisos.idpermisos
     AND usuario_permiso.idusuario = ${p.idusuario}
 ORDER BY 
@@ -1367,12 +1367,12 @@ function administarrPermisosUsuario(req,res){
     let sql = ""
     if (p.idusuario_permiso) {
           sql = `
-        DELETE FROM correspondencia_jefatura.usuario_permiso WHERE (idusuario_permiso = '${p.idusuario_permiso}');
+        DELETE FROM correspondencia_C_1.usuario_permiso WHERE (idusuario_permiso = '${p.idusuario_permiso}');
                    `
          
     }else{
           sql =`
-        INSERT INTO correspondencia_jefatura.usuario_permiso (idusuario, idpermisos) VALUES ('${p.idusuario}', '${p.idpermiso}');
+        INSERT INTO correspondencia_C_1.usuario_permiso (idusuario, idpermisos) VALUES ('${p.idusuario}', '${p.idpermiso}');
 
 `
     }
@@ -1388,7 +1388,7 @@ async function resetContrasena(req,res){
     let p=req.body
     let password =await   hashPassword(p.contrasena);
     let sql=`
-    UPDATE correspondencia_jefatura.usuario
+    UPDATE correspondencia_C_1.usuario
     SET contrasena = '${password}'
     WHERE (idusuario = '${p.idusuario}');
     `
@@ -1403,8 +1403,8 @@ async function resetContrasena(req,res){
  async function reseteracontrasenaUsuarioFinal(req,res){
     let p = req.body
     console.log(p)
-    let traerContrasena=`SELECT contrasena FROM correspondencia_jefatura.usuario
-    join  correspondencia_jefatura.entidad on entidad.identidad =  usuario.id_entidad
+    let traerContrasena=`SELECT contrasena FROM correspondencia_C_1.usuario
+    join  correspondencia_C_1.entidad on entidad.identidad =  usuario.id_entidad
      where  usuario='${p.usuario}' `
     console.log(traerContrasena)
 
@@ -1428,7 +1428,7 @@ console.log(esperarpeticion.resultado[0].contrasena)
 
   let password =await   hashPassword(p.contrasena);
     let sql=`
-    UPDATE correspondencia_jefatura.usuario
+    UPDATE correspondencia_C_1.usuario
     SET contrasena = '${password}'
     WHERE (idusuario = '${p.idusuario}');
     `
@@ -1454,7 +1454,7 @@ console.log(esperarpeticion.resultado[0].contrasena)
 
     }
     let sql1=`
-            SELECT * FROM correspondencia_jefatura.vista_reporte_monitoreo
+            SELECT * FROM correspondencia_C_1.vista_reporte_monitoreo
            where year(fecha_sistema)=year("${p.mes}-1") and month(fecha_sistema)=month("${p.mes}-1")
            and idorganizacion=${p.hospital.idorganizacion}
          `
@@ -1574,7 +1574,7 @@ function estaVacio(obj) {
     );
 }
 function sacarFuerza(req,res){
-    let sql =`SELECT * FROM correspondencia_jefatura.expe_fuerza order by  nombre_fuerza`
+    let sql =`SELECT * FROM correspondencia_C_1.expe_fuerza order by  nombre_fuerza`
     db.query( sql,(error,resultado,field)=>{
         if(error) return res.status(200).send({error:error.sqlMessage})
         if(resultado.length===0) return res.status(200).send({mensaje:"No se encontraron las fuerzas"})
@@ -1582,7 +1582,7 @@ function sacarFuerza(req,res){
     })
 }
 function sacarCategoria(req,res){
-    let sql =`SELECT * FROM correspondencia_jefatura.expe_categoria where idexpe_fuerza =${req.body.idexpe_fuerza}`
+    let sql =`SELECT * FROM correspondencia_C_1.expe_categoria where idexpe_fuerza =${req.body.idexpe_fuerza}`
     db.query( sql,(error,resultado,field)=>{
         if(error) return res.status(200).send({error:error.sqlMessage})
         if(resultado.length===0) return res.status(200).send({mensaje:"No se encontraron categorias"})
@@ -1590,7 +1590,7 @@ function sacarCategoria(req,res){
     })
 }
 function sacarSubCategoria(req,res){
-    let sql =`SELECT * FROM correspondencia_jefatura.expe_sub_categoria where idexpe_categoria =${req.body.idcategoria}`
+    let sql =`SELECT * FROM correspondencia_C_1.expe_sub_categoria where idexpe_categoria =${req.body.idcategoria}`
     db.query( sql,(error,resultado,field)=>{
         if(error) return res.status(200).send({error:error.sqlMessage})
         if(resultado.length===0) return res.status(200).send({mensaje:"No se encontraron sub categorias"})
@@ -1629,8 +1629,8 @@ async function insertarExpedienteTitular(req,res) {
 
 function sacarPersonasExpediente(req,res){
        let sql = `
-       SELECT *,(select correspondencia_jefatura.expe_contarHijosTitular(idexpe_persona)) as cantidad_hijos 
-       FROM correspondencia_jefatura.vista_expe_personas_titulares
+       SELECT *,(select correspondencia_C_1.expe_contarHijosTitular(idexpe_persona)) as cantidad_hijos 
+       FROM correspondencia_C_1.vista_expe_personas_titulares
             where filtro like "%${req.body.filtro}%"
        `
        console.log(sql)
@@ -1647,7 +1647,7 @@ function sacarPersonasExpediente(req,res){
 function guadarExpe_familiar(req,res){
     let p = req.body
     let sql  = `
-            call correspondencia_jefatura.insertar_expe_familiar_prueba3('${p.nombre}', '${p.apellido}', '${p.identidad}',
+            call correspondencia_C_1.insertar_expe_familiar_prueba3('${p.nombre}', '${p.apellido}', '${p.identidad}',
             '${p.bin}', '${p.idexpe_sub_categoria}', '${p.idexp_titular}', '${p.serie}',${p.idparentezco});
      `
      console.log(sql)
@@ -1662,7 +1662,7 @@ function guadarExpe_familiar(req,res){
 
 function sacarParentezco(req,res){
   let sql =`
-  SELECT * FROM correspondencia_jefatura.expe_parentezco;
+  SELECT * FROM correspondencia_C_1.expe_parentezco;
   `
   console.log(sql)
   db.query(sql, (error2, resultado2) => {
@@ -1678,7 +1678,7 @@ function sacarParentezco(req,res){
 
 function buscarExpedienteTodos(req,res){
     let sql =`
-    SELECT * FROM correspondencia_jefatura.vista_expe_todos
+    SELECT * FROM correspondencia_C_1.vista_expe_todos
     where filtro like "%${req.body.filtro}%"
     `
     console.log(sql)
@@ -1695,7 +1695,7 @@ function buscarExpedienteTodos(req,res){
 
 function sacarmovimientoPorEntidad(req,res){
     let sql =`
-    SELECT * FROM correspondencia_jefatura.expe_movimiento_expediente
+    SELECT * FROM correspondencia_C_1.expe_movimiento_expediente
 where id_entidad=${req.body.id_entidad} and hora_recepcion is null
     `
     db.query(sql, (error2, resultado2) => {
@@ -1710,10 +1710,10 @@ where id_entidad=${req.body.id_entidad} and hora_recepcion is null
 function sacarExpedientesPendientes(req,res){
     let sql =`
     select T.*,ex.serie as serie,ex.nombre as persona_nombre,ex.apellido as persona_apellido  from(SELECT idexpe_movimiento_expediente,expe_movimiento_expediente.id_entidad,idusuario_envia,
-id_persona_expediente,hora_envia,nombre FROM correspondencia_jefatura.expe_movimiento_expediente
-join correspondencia_jefatura.usuario us on us.idusuario =expe_movimiento_expediente.idusuario_envia
+id_persona_expediente,hora_envia,nombre FROM correspondencia_C_1.expe_movimiento_expediente
+join correspondencia_C_1.usuario us on us.idusuario =expe_movimiento_expediente.idusuario_envia
 where expe_movimiento_expediente.id_entidad=${req.body.id_entidad} and hora_recepcion is null) as T
-join correspondencia_jefatura.vista_expe_todos ex on ex.idexpe_persona = T.id_persona_expediente
+join correspondencia_C_1.vista_expe_todos ex on ex.idexpe_persona = T.id_persona_expediente
  
     `
     db.query(sql, (error2, resultado2) => {
@@ -1730,11 +1730,11 @@ function sacarExpedientesRecibidos(req,res){
     let sql =`
       select D.*,ur.nombre as usuario_Recibe from(select T.*,ex.serie as serie,ex.nombre as persona_nombre,ex.apellido as persona_apellido
   from(SELECT idexpe_movimiento_expediente,expe_movimiento_expediente.id_entidad,idusuario_envia,
-    id_persona_expediente,hora_envia,nombre,idusuario_recibe,hora_recepcion FROM correspondencia_jefatura.expe_movimiento_expediente
-    join correspondencia_jefatura.usuario us on us.idusuario =expe_movimiento_expediente.idusuario_envia
+    id_persona_expediente,hora_envia,nombre,idusuario_recibe,hora_recepcion FROM correspondencia_C_1.expe_movimiento_expediente
+    join correspondencia_C_1.usuario us on us.idusuario =expe_movimiento_expediente.idusuario_envia
     where expe_movimiento_expediente.id_entidad=${req.body.id_entidad} and hora_recepcion is not null and hora_ultima_estancia is  null) as T
-    join correspondencia_jefatura.vista_expe_todos ex on ex.idexpe_persona = T.id_persona_expediente) as D
-    join correspondencia_jefatura.usuario ur on ur.idusuario=D.idusuario_recibe
+    join correspondencia_C_1.vista_expe_todos ex on ex.idexpe_persona = T.id_persona_expediente) as D
+    join correspondencia_C_1.usuario ur on ur.idusuario=D.idusuario_recibe
     
  
  
@@ -1751,7 +1751,7 @@ function sacarExpedientesRecibidos(req,res){
 
 function aceptarRecibidosPendiente(req,res){
     let sql =`
- UPDATE correspondencia_jefatura.expe_movimiento_expediente
+ UPDATE correspondencia_C_1.expe_movimiento_expediente
  SET idusuario_recibe = '${req.body.idusuario}',
   hora_recepcion = now()
    WHERE (idexpe_movimiento_expediente = '${req.body.idexpe_movimiento_expediente}');
@@ -1770,7 +1770,7 @@ function enviarExpediente(req,res){
     let p = req.body
  
     let sql =`
-    call correspondencia_jefatura.insertar_expe_enviar(${p.id_entidad_}, ${p.idusuario_envia_}, ${p.id_persona_expediente_}, 
+    call correspondencia_C_1.insertar_expe_enviar(${p.id_entidad_}, ${p.idusuario_envia_}, ${p.id_persona_expediente_}, 
     'Enviado', ${p.idexpe_movimiento_expediente_}, @mensaje);
  
     `
@@ -1816,9 +1816,9 @@ function buscarDondeEstaUnExpediente(req,res){
     let sql = `
     SELECT ent.nombre as depto,hora_envia,hora_recepcion,hora_ultima_estancia,id_persona_expediente,
 todo.nombre as nombreAfiliado,todo.apellido as apellidoAfiliado,todo.filtro,todo.identidad,todo.tipo ,todo.serie
-FROM correspondencia_jefatura.expe_movimiento_expediente
-join correspondencia_jefatura.entidad ent on ent.identidad =  expe_movimiento_expediente.id_entidad
-join correspondencia_jefatura.vista_expe_todos todo on todo.idexpe_persona =  expe_movimiento_expediente.id_persona_expediente
+FROM correspondencia_C_1.expe_movimiento_expediente
+join correspondencia_C_1.entidad ent on ent.identidad =  expe_movimiento_expediente.id_entidad
+join correspondencia_C_1.vista_expe_todos todo on todo.idexpe_persona =  expe_movimiento_expediente.id_persona_expediente
 where filtro like "%${req.body.filtro}%" and (hora_recepcion is null or hora_ultima_estancia is null)
     `
      
@@ -1838,7 +1838,7 @@ function modificarPersonaExpediente(req,res){
     let p = req.body
     console.log(p)
     let sql = `
-    call correspondencia_jefatura.modificar_expe_titular('${p.nombre}', '${p.apellido}', '${p.identidad}', '${p.numero_bin}', 
+    call correspondencia_C_1.modificar_expe_titular('${p.nombre}', '${p.apellido}', '${p.identidad}', '${p.numero_bin}', 
     '${p.idexpe_persona}', ${p.idexpe_sub_categoria.idexpe_sub_categoria},
      '${p.serie}','${p.idexpe_sub_categoria.codigo}-${p.serie}','${p.datos_anteriores.serie}',@mensaje);
      `
@@ -1863,7 +1863,7 @@ function modificarPersonaExpediente(req,res){
 function sacarinformacionSiEsTitular(req,res){
     let sql = `
   
-    SELECT * FROM correspondencia_jefatura.vista_expe_personas_titulares where idexpe_persona =${req.body.idexpe_persona}
+    SELECT * FROM correspondencia_C_1.vista_expe_personas_titulares where idexpe_persona =${req.body.idexpe_persona}
     `
     console.log(sql)
     db.query(sql, (error2, resultado2) => {
@@ -1880,7 +1880,7 @@ function sacarinformacionSiEsTitular(req,res){
 function ModificarDatosFamiliares(req,res){
     let p = req.body
 let sql=`
-UPDATE correspondencia_jefatura.expe_persona 
+UPDATE correspondencia_C_1.expe_persona 
     SET nombre = '${p.nombre}',
     apellido = '${p.apellido}', 
     identidad = '${p.identidad}',
@@ -1901,7 +1901,7 @@ db.query(sql, (error2, resultado2) => {
 function aliminarVinculo(req,res){
     let p = req.body
     let sql = `
-        DELETE FROM correspondencia_jefatura.expe_titular_familiar 
+        DELETE FROM correspondencia_C_1.expe_titular_familiar 
         WHERE (idexpe_titular = '${p.idexpe_titular}') and (idexpe_familiar = '${p.idexpe_familiar}');
     `
     console.log(sql)
@@ -1917,9 +1917,9 @@ db.query(sql, (error2, resultado2) => {
 
 function sacarTipoVinculoPrFamiliar(req,res){
     let p = req.body
-    let sql  =`SELECT idexpe_titular,idexpe_familiar,nombre,apellido,identidad,serie,nombre_parentezco FROM correspondencia_jefatura.expe_titular_familiar
-join  correspondencia_jefatura.expe_persona per on per.idexpe_persona =  expe_titular_familiar.idexpe_titular
-join correspondencia_jefatura.expe_parentezco pa on pa.idexpe_parentezco=expe_titular_familiar.idparentezco
+    let sql  =`SELECT idexpe_titular,idexpe_familiar,nombre,apellido,identidad,serie,nombre_parentezco FROM correspondencia_C_1.expe_titular_familiar
+join  correspondencia_C_1.expe_persona per on per.idexpe_persona =  expe_titular_familiar.idexpe_titular
+join correspondencia_C_1.expe_parentezco pa on pa.idexpe_parentezco=expe_titular_familiar.idparentezco
 where  idexpe_familiar= ${p.idexpe_persona}`
 console.log(sql)
 db.query(sql, (error2, resultado2) => {
@@ -1936,11 +1936,11 @@ db.query(sql, (error2, resultado2) => {
 function sacarHistoricoMovimiento(req,res){
     let sql =`
     select D.*,us.nombre as usuario_recibio from(SELECT  hora_envia,hora_recepcion,hora_ultima_estancia,id_persona_expediente,
-ent.nombre as departamento,idusuario_recibe,idusuario_envia,us.nombre as usaurio_envia FROM correspondencia_jefatura.expe_movimiento_expediente
-join  correspondencia_jefatura.entidad ent on ent.identidad = expe_movimiento_expediente.id_entidad
-join correspondencia_jefatura.usuario us on us.idusuario = expe_movimiento_expediente.idusuario_envia
+ent.nombre as departamento,idusuario_recibe,idusuario_envia,us.nombre as usaurio_envia FROM correspondencia_C_1.expe_movimiento_expediente
+join  correspondencia_C_1.entidad ent on ent.identidad = expe_movimiento_expediente.id_entidad
+join correspondencia_C_1.usuario us on us.idusuario = expe_movimiento_expediente.idusuario_envia
 where id_persona_expediente =  ${req.body.id_persona_expediente} ) as D
-left join correspondencia_jefatura.usuario us on us.idusuario = D.idusuario_recibe
+left join correspondencia_C_1.usuario us on us.idusuario = D.idusuario_recibe
  order by D.hora_envia desc
  limit 100
     
@@ -1958,8 +1958,8 @@ db.query(sql, (error2, resultado2) => {
 }
 
 function sacarOtrosOrigenes(req,res){
-       let sqlOtrosOrigenes = `SELECT * from correspondencia_jefatura.correspondencias_mas_origenes
-            join correspondencia_jefatura.origenes on origenes.idorigenes = correspondencias_mas_origenes.idorigen
+       let sqlOtrosOrigenes = `SELECT * from correspondencia_C_1.correspondencias_mas_origenes
+            join correspondencia_C_1.origenes on origenes.idorigenes = correspondencias_mas_origenes.idorigen
             where idcorrespondencia=${req.body.idcorrespondencia}`
                 console.log(sqlOtrosOrigenes)
 db.query(sqlOtrosOrigenes, (error2, resultado2) => {
@@ -1975,7 +1975,7 @@ db.query(sqlOtrosOrigenes, (error2, resultado2) => {
 
 function modificarTexto(req,res){
     let sql = `
-     UPDATE correspondencia_jefatura.correspondencia 
+     UPDATE correspondencia_C_1.correspondencia 
      SET texto = '${req.body.texto}' WHERE (idcorrespondencia = '${req.body.idcorrespondencia}');
 
 
@@ -1991,7 +1991,7 @@ function modificarTexto(req,res){
 
 function sacarDisposicionesID(req,res){
     let sql = `
-    SELECT * FROM correspondencia_jefatura.correspondencia_disposicion where idcorrespondencia=${req.body.idcorrespondencia}
+    SELECT * FROM correspondencia_C_1.correspondencia_disposicion where idcorrespondencia=${req.body.idcorrespondencia}
     `
      db.query(sql, (error2, resultado2) => {
     if (error2)    return res.status(200).send({error:error2.sqlMessage})
@@ -2026,7 +2026,7 @@ function guardarDisposicionModificada(req, res) {
   const placeholders = ids.map(() => '?').join(',');
 
   const sql = `
-    UPDATE correspondencia_jefatura.correspondencia_disposicion
+    UPDATE correspondencia_C_1.correspondencia_disposicion
     SET texto = CASE idcorrespondencia_disposicion
       ${caseSql}
     END
