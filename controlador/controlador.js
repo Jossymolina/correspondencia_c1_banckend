@@ -360,11 +360,10 @@ function sacarNivelAtencion(req,res){
     let sql = `
     INSERT INTO correspondencia_C_1.correspondencia (identidad, idorigenes, fecha, 
     fecha_sistema, texto,expediente,
-    idprioridad,idtipo,idclasificacion,idusuario ${p.f1?',firma1':'' } ${p.f2?',firma2':'' } ${p.f3?',firma3':'' }) 
+    idprioridad,idtipo,idclasificacion,fecha_limite,idusuario ${p.f1?',firma1':'' } ${p.f2?',firma2':'' } ${p.f3?',firma3':'' }) 
     VALUES ('${p.identidad}', '${p.origen.idorigenes}', '${p.fecha}', now(), '${p.descripcion}',
-    '${p.expediente}',${p.idprioridad},${p.idtipo},${p.idclasificacion},${p.usuario.idusuario}
+    '${p.expediente}',${p.idprioridad},${p.idtipo},${p.idclasificacion},${p.fecha_limite?"'"+p.fecha_limite+"'":null},${p.usuario.idusuario}
     ${p.f1?','+p.f1:'' }  ${p.f2?','+p.f2:'' }  ${p.f3?','+p.f3:'' });
-
     `
     console.log(sql)
     
@@ -2039,14 +2038,14 @@ function guardarDisposicionModificada(req, res) {
 
     if (error) {
       console.error('Error en guardarDisposicionModificada:', error);
-      return res.status(500).json({
+      return res.status(200).json({
         ok: false,
         mensaje: 'Error al actualizar disposiciones'
       });
     }
 
     if (result.affectedRows === 0) {
-      return res.status(404).json({
+      return res.status(200).json({
         ok: false,
         mensaje: 'No se actualizaron registros'
       });
@@ -2062,6 +2061,42 @@ function guardarDisposicionModificada(req, res) {
   });
 }
 
+ 
+
+const obtenerAlertasCorrespondencia = async (req,res) => {
+
+    try {
+        const sql = `
+           SELECT
+            c.idcorrespondencia,
+            c.expediente,
+            c.fecha,
+            c.fecha_limite,
+            c.texto
+        FROM correspondencia_C_1.correspondencia c
+        WHERE DATE(c.fecha_limite)
+            BETWEEN DATE_SUB(CURDATE(), INTERVAL 1 DAY)
+                AND DATE_ADD(CURDATE(), INTERVAL 1 DAY)
+        AND c.identidad = ${req.body.identidad}
+        ORDER BY c.fecha_limite ASC;
+        `;
+console.log("Sacando pendientes")
+        console.log(sql)
+         db.query(sql, (error2, resultado2) => {
+            if (error2)    return res.status(200).send({error:error2.sqlMessage})
+            if (resultado2.length===0)    return res.status(200).send({mensaje:"No hay disposiciones"})
+             
+            return res.status(200).send({resultado:resultado2})  
+
+        });
+    
+    } catch (error) {
+        throw error;
+    }
+
+}
+
+ 
 module.exports = {
     prueba,
     crearOrganizacion,
@@ -2157,7 +2192,8 @@ module.exports = {
      sacarOtrosOrigenes,
      modificarTexto,
      sacarDisposicionesID,
-     guardarDisposicionModificada
+     guardarDisposicionModificada,
+     obtenerAlertasCorrespondencia
 
 
 

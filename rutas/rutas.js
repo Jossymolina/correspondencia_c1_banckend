@@ -126,6 +126,7 @@ api.post("/sacarOtrosOrigenes",[mediador.descodificar],  Controlador.sacarOtrosO
 api.post("/modificarTexto",[mediador.descodificar],  Controlador.modificarTexto)
 api.post("/sacarDisposicionesID",[mediador.descodificar],  Controlador.sacarDisposicionesID)
 api.post("/guardarDisposicionModificada",[mediador.descodificar],  Controlador.guardarDisposicionModificada)
+api.post("/obtenerAlertasCorrespondencia",[mediador.descodificar],  Controlador.obtenerAlertasCorrespondencia)
 
 
 
